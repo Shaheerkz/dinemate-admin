@@ -11,12 +11,12 @@ function Pricing() {
   const [data, setdata] = useState([]);
   const [editPkg, seteditPkg] = useState([]);
   const [show, setShow] = useState(false);
-  const [pkgNum, setpkgNum] = useState(null);
-  const [mothlyPrice, setmothlyPrice] = useState(0);
-  const [yearlyPrice, setyearlyPrice] = useState(0);
+  const [pkgNum, setpkgNum] = useState("");
+  const [mothlyPrice, setmothlyPrice] = useState("0");
+  const [yearlyPrice, setyearlyPrice] = useState("0");
   const [features, setfeatures] = useState([]);
   const [Inputfeatures, setInputfeatures] = useState("");
-
+  
   const handleClose = () => setShow(false);
   // const handleShow = () => setShow(true);
 
@@ -102,16 +102,18 @@ function Pricing() {
                       ))}
                     </div>
                     <div className="flex flex-wrap gap-2 items-center">
-                      <button className="block w-[40%] rounded-md border border-primary bg-primary p-3 text-center text-base font-medium text-white transition hover:bg-opacity-90">
-                        buy now
-                      </button>
+
                       <button
                         id={card._id}
                         onClick={async () => {
                           setShow(true);
                           let a = await data.find((d) => d._id === card._id);
-                          seteditPkg(a);
+                          await seteditPkg(a);
                           console.log(editPkg);
+                          setpkgNum(editPkg.subscriptionLevel)
+                          setmothlyPrice(editPkg.monthlyPrice)
+                          setyearlyPrice(editPkg.yearlyPrice)
+                          setInputfeatures(editPkg.features)
                         }}
                         className="block w-[44%] rounded-md border border-stroke bg-transparent hover:bg-green-600 p-3 text-center text-base font-medium text-green-600 transition hover:border-green-600  dark:border-dark-3"
                       >

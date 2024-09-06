@@ -1,11 +1,14 @@
 import React , {useState, useEffect, useContext} from 'react'
 import axios from 'axios'
 import { LoginContext } from '../../context/Admin'
-
+import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
 
 function Insights() {
-
+  const navigate = useNavigate()
     const {adminData} = useContext(LoginContext)
+    const token = Cookies.get('token')
+
     const [data, setdata] = useState([])
 
     const fetchInsight = async () =>{
@@ -14,7 +17,7 @@ function Insights() {
         const response = await axios.get(url, {
             headers : {
                 accept: '*/*',
-                'Authorization' : `Bearer ${adminData.token}`
+                'Authorization' : `Bearer ${token}`
             }
         })
 
@@ -24,7 +27,12 @@ function Insights() {
     }
 
     useEffect(() => {
-        fetchInsight()
+        if(token){
+          fetchInsight()
+        }
+        else{
+          navigate('/')
+        }
     }, []);
 
   return (

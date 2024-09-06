@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -10,10 +10,16 @@ import { LoginContext } from "../../context/Admin";
 import UserDummyRow from "./UserDummyRow";
 import UserApiRow from "./UserApiRow";
 import Insights from "./Insights";
+import Cookies from 'js-cookie'
 
 
 function UserTable() {
+
+
+  const navigate = useNavigate()
   const {adminData , setuserData , storeToken} = useContext(LoginContext)
+  let token = Cookies.get('token')
+
  
 
 
@@ -28,11 +34,11 @@ function UserTable() {
       const response = await axios.get('https://backend.mydinemate.com/api/admin/getUsers', {
         headers: {
           'Accept': '*/*',
-          'Authorization': `Bearer ${adminData.token}` 
+          'Authorization': `Bearer ${token}` 
         }
       });
       await setuserData(response.data);
-       await setData(response.data); 
+       await setData(response.data);        
       setError(null);
     
     }
@@ -46,10 +52,26 @@ function UserTable() {
 }
 
   useEffect(() => { 
-    fetchUsers()
-    
+
+    let cookie = Cookies.get('token')
+    if(cookie){
+      console.log(storeToken);
+      
+      fetchUsers()
+    }
+    else{
+      console.log(storeToken);
+      navigate('/')
+    }
+      
   }, [])
+ 
+  console.log("tokin aja  ",storeToken);
   
+
+
+
+
   const [currentPage, setCurrentPage] = useState(1); // current page state
   const usersPerPage = 20; // Number of users per page
 
@@ -81,18 +103,7 @@ function UserTable() {
 
     <main>
       <h1>Dashboard</h1>
-      <div className="date flex gap-2">
-        <input
-          type="input"
-          name=""
-          id=""
-          className="py-3 w-[300px] px-10 rounded-md mr-2"
-          placeholder="search..."
-        />
-        <button className="bg-[#2f007e] px-5 py-3 rounded-md text-white">
-          Search
-        </button>
-      </div>
+      
       <Insights/>
       <div className="row justify-between my-5">
         <div className="col-lg-4 col-md-6 col-sm-6">
@@ -169,11 +180,24 @@ function UserTable() {
             <button onClick={openFilter} className="text-[#2f007e] bg-white p-2 text-2xl rounded-lg shadow-lg">
               <FontAwesomeIcon icon={faFilter} />
             </button>
+       
             {/* <Link className="bg-[#2f007e] rounded-lg py-3 px-6 text-white">
               Add User
             </Link> */}
           </div>
         </div>
+      </div>
+      <div className="date flex gap-2">
+        <input
+          type="input"
+          name=""
+          id=""
+          className="py-3 w-[300px] px-10 rounded-md mr-2"
+          placeholder="search  by email"
+        />
+        <button className="bg-[#2f007e] px-5 py-3 rounded-md text-white">
+          Search
+        </button>
       </div>
       <div className="flex gap-3 items-center my-2">
       <p>pages : </p>
@@ -190,6 +214,7 @@ function UserTable() {
         ))}
       </div>
       </div>
+      <div style={{overflowX : 'scroll'}}>
       <Table className="shadow-xl">
         <thead>
           <tr>
@@ -197,7 +222,7 @@ function UserTable() {
             <th>name</th>
             <th>Joined</th>
             {/* {data.length ? <th>Status</th> : <th colSpan={2}>Status</th>} */}
-            {data.length ? <th>Email</th> : ""}
+             <th>Email</th>
             <th>Options</th>
           </tr>
         </thead>
@@ -216,6 +241,7 @@ function UserTable() {
         </tbody> : <UserDummyRow/>}
         
       </Table>
+      </div>
      
     </main>
   );

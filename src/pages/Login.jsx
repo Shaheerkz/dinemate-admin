@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { LoginContext } from "../context/Admin";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
+import Cookies from 'js-cookie'
 
 function Login() {
   const navigate = useNavigate();
@@ -33,7 +34,13 @@ function Login() {
         },
       });
       await setAdminData(result.data);
+    
+
+      localStorage.setItem('token' , true)
+      
       console.log(adminData.adminImageUrl);
+
+      Cookies.set('token' , result.data.token , {expires : 1})
       setError(null);
       navigate("/user");
     } catch (error) {

@@ -9,11 +9,16 @@ import { Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faFilter , faUpload , faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Modal} from "react-bootstrap";
-import Profile from '../images/profile-img.jpg'
+import Profile from '../images/resturent-img.png'
 import User from '../images/user.png'
+import Cookies from 'js-cookie'
+import { useNavigate } from "react-router-dom";
 
 
 function ResturentManagment() {
+
+
+  const navigate = useNavigate()
 
   const [file, setFile] = useState(Profile);
   const [imageUrl, setImageUrl] = useState("");
@@ -32,6 +37,9 @@ function ResturentManagment() {
   const [resturentpass, setresturentpass] = useState("");
   const [resturentNumb, setresturentNumb] = useState("");
 
+  let token = Cookies.get('token')
+
+
 
 
 
@@ -42,7 +50,7 @@ function ResturentManagment() {
         {
           headers: {
             Accept: "*/*",
-            Authorization: `Bearer ${adminData.token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -110,7 +118,13 @@ function ResturentManagment() {
   }
 
   useEffect(() => {
-    fetchUsers();
+    let cookie = Cookies.get('token')
+    if(cookie){
+      fetchUsers()
+    }
+    else{
+      navigate('/')
+    }
   }, []);
   return (
     <main>

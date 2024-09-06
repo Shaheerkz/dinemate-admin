@@ -19,8 +19,14 @@ import axios from "axios";
 import { Modal } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { Form } from "react-bootstrap";
+import Cookies from 'js-cookie'
+import { useNavigate } from "react-router-dom";
 
 function Right() {
+
+  let token = Cookies.get('token')
+
+
   const fetchFaqs = async () => {
     const url = "https://backend.mydinemate.com/api/admin/getFAQs";
     const faqRes = await axios.get(url);
@@ -44,7 +50,7 @@ function Right() {
     await axios.post(url, data, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${adminData.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log("added");
@@ -67,7 +73,7 @@ function Right() {
       headers: {
         Accept : '*/*',
         "Content-Type": "application/json",
-        Authorization: `Bearer ${adminData.token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
 
@@ -85,7 +91,7 @@ function Right() {
       headers: {
         Accept : '*/*',
         "Content-Type": "application/json",
-        Authorization: `Bearer ${adminData.token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
 

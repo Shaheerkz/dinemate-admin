@@ -2,11 +2,16 @@ import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars , faGripVertical , faCartShopping , faUserTie , faRightFromBracket, faMoneyBill , faBowlFood, faRankingStar } from '@fortawesome/free-solid-svg-icons';
 import { useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Logo from '../images/logo.jpeg'
 
 function Sidebar(){
+    const navigate = useNavigate()
   const [isSidebarOpen , setisSidebarOpen] = useState(false)
+  const handleLogout = async()=>{
+    await localStorage.removeItem('token');
+    navigate('/')
+  }
   return (
     <>
     <aside>
@@ -39,10 +44,12 @@ function Sidebar(){
                 <FontAwesomeIcon icon={faBowlFood} />
                 <h3>Resturent Managment</h3>
                 </NavLink>
-                <NavLink className={({isActive})=>`${isActive ? "active" : ""}`}  to="#">
+               <button onClick={handleLogout}>
+               <NavLink className={({isActive})=>`${isActive ? "active" : ""}`}  to="#">
                 <FontAwesomeIcon icon={faRightFromBracket} className='text-[20px]' />
                     <h3>Logout</h3>
                 </NavLink>
+               </button>
             </div>
         </aside>
   </>
