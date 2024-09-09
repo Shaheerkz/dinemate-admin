@@ -131,7 +131,6 @@ aside{
 aside .top{
     margin-top: 1.4rem;
     display: flex;
-    background:var(--color-white);
     justify-content: space-between;
     align-items: center;
     position: fixed;
@@ -142,8 +141,8 @@ aside .logo{
     align-items: center;
 }
 aside .logo img{
-    width: 3rem;
-    height: 3rem;
+    height: 4rem;
+    width: 6rem;
 }
 aside .close{
     display: none;
