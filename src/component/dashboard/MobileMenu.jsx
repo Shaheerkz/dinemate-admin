@@ -7,16 +7,34 @@ import {
   faCartShopping,
   faMoneyBill,
   faUserTie,
+  faBowlFood,
+  faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import Logo from "../../images/logo.jpeg";
 import { ToggleContext } from "../../context/ToggleSidebar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie'
+
 
 function MobileMenu() {
+
+  const navigate = useNavigate()
   const { toggle, setToggle } = useContext(ToggleContext);
   const handleToggle = () => {
     setToggle(!toggle);
   };
+
+  const handleLogout = async()=>{
+    Cookies.remove('token');
+    Cookies.remove('adminName');
+    Cookies.remove('adminPass');
+    Cookies.remove('adminEmail');
+
+    setTimeout(()=>{
+        navigate('/')
+    },2000)
+
+  }
 
   return (
     <aside
@@ -53,6 +71,14 @@ function MobileMenu() {
           <FontAwesomeIcon icon={faMoneyBill} className="text-[20px]" />
           <h3 className="text-[24px]">Payment Managment</h3>
         </Link>
+        <Link className="flex my-2 items-center gap-[1rem] hover:bg-[#7380ec] py-2 px-4 hover:text-white transition-all hover:ml-3 " to={'/resturent-managment'}>
+          <FontAwesomeIcon icon={faBowlFood} className="text-[20px]" />
+          <h3 className="text-[24px]">Resturent Managment</h3>
+        </Link>
+        <button className="flex my-2 items-center gap-[1rem] hover:bg-[#7380ec] py-2 px-4 hover:text-white transition-all hover:ml-3 "  onClick={handleLogout}>
+          <FontAwesomeIcon icon={faRightFromBracket} className="text-[20px]" />
+          <h3 className="text-[24px]">Logout</h3>
+        </button>
       </div>
     </aside>
   );

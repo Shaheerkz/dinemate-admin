@@ -5,8 +5,12 @@ import { LoginContext } from "../../context/Admin";
 import { Button } from "react-bootstrap";
 import { Modal } from "react-bootstrap";
 import { Form } from "react-bootstrap";
+import Cookie from 'js-cookie'
 
 function Pricing() {
+
+
+   const token  = Cookie.get('token')
   const { adminData } = useContext(LoginContext);
   const [data, setdata] = useState([]);
   const [editPkg, seteditPkg] = useState([]);
@@ -32,7 +36,7 @@ function Pricing() {
     const savePkg = await axios.post(url, data, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${adminData.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -43,7 +47,7 @@ function Pricing() {
     const response = await axios.get(
       "https://backend.mydinemate.com/api/admin/getSubscriptionPackages"
     );
-    setdata(response.data);
+    await setdata(response.data);
     console.log(data);
   };
 
@@ -107,13 +111,13 @@ function Pricing() {
                         id={card._id}
                         onClick={async () => {
                           setShow(true);
-                          let a = await data.find((d) => d._id === card._id);
-                          await seteditPkg(a);
+                          let a =  data.find((d) => d._id === card._id);
+                         await seteditPkg(a);
                           console.log(editPkg);
-                          setpkgNum(editPkg.subscriptionLevel)
-                          setmothlyPrice(editPkg.monthlyPrice)
-                          setyearlyPrice(editPkg.yearlyPrice)
-                          setInputfeatures(editPkg.features)
+                          setpkgNum(a.subscriptionLevel)
+                          setmothlyPrice(a.monthlyPrice)
+                          setyearlyPrice(a.yearlyPrice)
+                          setInputfeatures(a.features)
                         }}
                         className="block w-[44%] rounded-md border border-stroke bg-transparent hover:bg-green-600 p-3 text-center text-base font-medium text-green-600 transition hover:border-green-600  dark:border-dark-3"
                       >

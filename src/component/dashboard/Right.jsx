@@ -8,7 +8,7 @@ import {
   faBell,
   faBarsStaggered,
   faPen,
-  faTrash
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useState } from "react";
@@ -19,12 +19,15 @@ import axios from "axios";
 import { Modal } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { Form } from "react-bootstrap";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 function Right() {
+  let token = Cookies.get("token");
+  const navigate = useNavigate();
 
-  let token = Cookies.get('token')
 
 
   const fetchFaqs = async () => {
@@ -54,16 +57,14 @@ function Right() {
       },
     });
     console.log("added");
-    setmessage('Faqs is Added')
-    setshowmessage(true)
-    setTimeout(()=>{
-      setshowmessage(setshowmessage(false))
-    },3000)
-    
+    setmessage("Faqs is Added");
+    setshowmessage(true);
+    setTimeout(() => {
+      setshowmessage(setshowmessage(false));
+    }, 3000);
   };
 
-
-  const editFaq = async ()=>{
+  const editFaq = async () => {
     const url = `https://backend.mydinemate.com/api/admin/editFAQs/${FaqId}`;
     const data = {
       question: faqQ,
@@ -71,66 +72,59 @@ function Right() {
     };
     const response = await axios.put(url, data, {
       headers: {
-        Accept : '*/*',
+        Accept: "*/*",
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    })
+    });
 
-    console.log(response , 'edited');
-    setmessage('Faqs is updated')
-    setshowmessage(true)
-    setTimeout(()=>{
-      setshowmessage(setshowmessage(false))
-    },3000)
-    
+    console.log(response, "edited");
+    setmessage("Faqs is updated");
+    setshowmessage(true);
+    setTimeout(() => {
+      setshowmessage(setshowmessage(false));
+    }, 3000);
   };
-  const deletFaq = async (e)=>{
+  const deletFaq = async (e) => {
     const url = `https://backend.mydinemate.com/api/admin/deleteFAQs/${e}`;
-    const response = await axios.delete(url , {
+    const response = await axios.delete(url, {
       headers: {
-        Accept : '*/*',
+        Accept: "*/*",
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    })
+    });
 
     console.log(faqs);
-    
+
     console.log("deleted");
-    setmessage('Faqs is Deleted')
-    setshowmessage(true)
-    setTimeout(()=>{
-      setshowmessage(setshowmessage(false))
-    },3000)
-    
+    setmessage("Faqs is Deleted");
+    setshowmessage(true);
+    setTimeout(() => {
+      setshowmessage(setshowmessage(false));
+    }, 3000);
+  };
 
-  }
-
-  const updatePolicy = async()=>{
-    const url ='https://backend.mydinemate.com/api/admin/editPrivacyPolicy'
+  const updatePolicy = async () => {
+    const url = "https://backend.mydinemate.com/api/admin/editPrivacyPolicy";
     const data = {
-      policy : faqQ
-    }
+      policy: ckData,
+    };
 
-    const response = await axios.put(url, data , {
+    const response = await axios.put(url, data, {
       headers: {
-        Accept : '*/*',
+        Accept: "*/*",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${adminData.token}`,
+        Authorization: `Bearer ${token}`,
       },
-    } )
-    console.log('edited Policy');
-    setmessage('Policy is updated')
-    setshowmessage(true)
-    setTimeout(()=>{
-      setshowmessage(setshowmessage(false))
-    },3000)
-    
-    
-  }
-
-
+    });
+    console.log("edited Policy");
+    setmessage("Policy is updated");
+    setshowmessage(true);
+    setTimeout(() => {
+      setshowmessage(setshowmessage(false));
+    }, 3000);
+  };
 
   const { adminData } = useContext(LoginContext);
   const { toggle, setToggle } = useContext(ToggleContext);
@@ -145,17 +139,52 @@ function Right() {
   const [FaqId, setFaqId] = useState("");
   const [message, setmessage] = useState("");
   const [showmessage, setshowmessage] = useState(false);
+  const [Data, setData] = useState();
+  const [ckData, setckData] = useState("");
 
-  const name = adminData ? adminData.admin.name : "Anus";
-  const Image = adminData.adminImageUrl ? adminData.adminImageUrl : prfile;
+  const pass = Cookies.get("adminPass");
+  const Email = Cookies.get("adminEmail");
+
+  const handleEditorChange = (event, editor) => {
+    const data = editor.getData();
+    console.log("Content was updated:", data , event , editor);
+    setckData(data)
+
+  };
+
+  const fetchData = async () => {
+    const url = "https://backend.mydinemate.com/api/admin/login";
+    const data = {
+      email: Email,
+      password: pass,
+    };
+
+    const result = await axios.post(url, data, {
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      },
+    });
+
+    await setData(result.data);
+  };
+
+  const name = Data ? Data.admin.name : "Anus";
+  const Image = Data ? prfile : prfile;
 
   useCallback(() => {
     fetchFaqs();
-  }, [setfaqs, faqs])
+  }, [setfaqs, faqs]);
 
   useEffect(() => {
-    fetchFaqs();
-    fetchPolicy();
+    let cookie = Cookies.get("token");
+    if (cookie) {
+      fetchData();
+      fetchFaqs();
+      fetchPolicy();
+    } else {
+      navigate("/");
+    }
   }, []);
 
   const handleFaqClose = () => setFaqShow(false);
@@ -203,21 +232,23 @@ function Right() {
                 <Accordion.Item eventKey={index}>
                   <Accordion.Header>
                     {faq.question}{" "}
-                    <button 
-                    onClick={(e) => {
-                     setFaqId(faq._id)
-                      setFaqEdit(true)
-                      console.log(FaqId)
-                      fetchFaqs()
+                    <button
+                      onClick={(e) => {
+                        setFaqId(faq._id);
+                        setFaqEdit(true);
+                        console.log(FaqId);
+                        fetchFaqs();
                       }}
-                    id={faq._id}
-                    className="bg-green-600 ml-2 text-white p-1 rounded-md ">
+                      id={faq._id}
+                      className="bg-green-600 ml-2 text-white p-1 rounded-md "
+                    >
                       <FontAwesomeIcon icon={faPen} />
                     </button>{" "}
-                    <button 
-                    onClick={() => deletFaq(faq._id)}
-                    id={faq._id}
-                    className="bg-red-600 ml-2 text-white p-1 rounded-md ">
+                    <button
+                      onClick={() => deletFaq(faq._id)}
+                      id={faq._id}
+                      className="bg-red-600 ml-2 text-white p-1 rounded-md "
+                    >
                       <FontAwesomeIcon icon={faTrash} />
                     </button>{" "}
                   </Accordion.Header>
@@ -233,14 +264,15 @@ function Right() {
           <h3>Add Faqs</h3>
         </button>
       </div>
-      <div className="sales-analytics">
+      <div className="sales-analytics ">
         <h2>Privacy Policy</h2>
-        <div className="bg-white shadow-lg rounded-md p-2 my-2">
-          <p className="text-xl">{policy.policy}</p>
+        <div className="bg-white shadow-lg rounded-md p-2 my-2 overflow-x-scroll">
+           {/* {policy.policy} */}
+           <div dangerouslySetInnerHTML={{__html :policy.policy }}></div>
         </div>
-        <button 
-        className="item add-product"
-        onClick={()=>setpolicyShow(true)}
+        <button
+          className="item add-product"
+          onClick={() => setpolicyShow(true)}
         >
           <h3>Update Policy</h3>
         </button>
@@ -429,27 +461,31 @@ function Right() {
         </Modal.Footer>
       </Modal>
 
-
       <Modal show={policyshow} onHide={handlePolicyClose}>
         <Modal.Header closeButton>
           <Modal.Title>EDIT POLICY</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="flex flex-col gap-2">
-            <div>
+            
               <Form.Label htmlFor="inputPassword4">Policy</Form.Label>
-              <Form.Control
+              {/* <Form.Control
                 type="text"
                 id="inputPassword4"
                 aria-describedby="passwordHelpBlock"
                 value={faqQ}
                 onChange={(e) => setfaqQ(e.target.value)}
               />
-            </div>
+            </div> */}
+            <CKEditor
+              editor={ClassicEditor}
+              data="<p>Type here...</p>"
+              onChange={handleEditorChange}
+            />
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleFaqEditClose}>
+          <Button variant="secondary" onClick={handlePolicyClose}>
             Close
           </Button>
           <Button variant="primary" onClick={updatePolicy}>
@@ -458,7 +494,13 @@ function Right() {
         </Modal.Footer>
       </Modal>
 
-      <div className={`fixed ${showmessage ? "opacity-100" : "opacity-0"} transition-opacity bg-green-600  bottom-0 right-2 px-4 py-2 text-white `}>{message} in several minutes</div>
+      <div
+        className={`fixed ${
+          showmessage ? "opacity-100" : "opacity-0"
+        } transition-opacity bg-green-600  bottom-0 right-2 px-4 py-2 text-white `}
+      >
+        {message} in several minutes
+      </div>
     </div>
   );
 }

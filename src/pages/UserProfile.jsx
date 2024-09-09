@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import EditProfile from "../component/user/EditProfile";
 import ProfileSetting from "./ProfileSetting";
@@ -6,9 +6,41 @@ import ChangePassword from "../component/user/ChangePassword";
 import profile from '../images/profile-img.jpg'
 import { useContext } from 'react'
 import { LoginContext } from "../context/Admin";
+import axios from "axios";
+import Cookie from 'js-cookie'
 function UserProfile() {
+
+  const pass = Cookie.get('adminPass')
+  const Email = Cookie.get('adminEmail')
+
     const [activeTab, setActiveTab] = useState("profile-overview");
-    const {adminData} = useContext(LoginContext)
+    const [Data , setData] = useState()
+
+    const fetchData = async ()=>{
+      const url = "https://backend.mydinemate.com/api/admin/login";
+      const data = {
+        email: Email,
+        password: pass,
+      };
+
+        const result = await axios.post(url, data, {
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+          },
+        });
+       
+        await setData(result.data)
+        
+        
+      }
+      
+      console.log(Data);
+
+  useEffect(()=>{
+    fetchData()
+  },[])
+      
 
   return (
     <main>
@@ -88,7 +120,7 @@ function UserProfile() {
                       <div className="col-lg-3 col-md-4 label ">
                         Full Name
                       </div>
-                      <div className="col-lg-9 col-md-8">{adminData.admin.name}</div>
+                      <div className="col-lg-9 col-md-8">{Data ?  Data.admin.name : "dummy"}</div>
                     </div>
 
                     <div className="row">
@@ -106,14 +138,14 @@ function UserProfile() {
                     <div className="row">
                       <div className="col-lg-3 col-md-4 label">Phone</div>
                       <div className="col-lg-9 col-md-8">
-                        {adminData.admin.contactNumber}
+                        {Data ?  Data.admin.contactNumber : "dummy" }
                       </div>
                     </div>
 
                     <div className="row">
                       <div className="col-lg-3 col-md-4 label">Email</div>
                       <div className="col-lg-9 col-md-8">
-                        {adminData.admin.email
+                        { Data ?  Data.admin.email : "dummy"
                         }
                       </div>
                     </div>

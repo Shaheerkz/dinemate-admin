@@ -41,6 +41,8 @@ function Login() {
       console.log(adminData.adminImageUrl);
 
       Cookies.set('token' , result.data.token , {expires : 1})
+      Cookies.set('adminEmail' , Email, {expires : 2})
+      Cookies.set('adminPass' , pass, {expires : 2})
       setError(null);
       navigate("/user");
     } catch (error) {

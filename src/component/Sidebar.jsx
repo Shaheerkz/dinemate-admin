@@ -4,13 +4,21 @@ import { faBars , faGripVertical , faCartShopping , faUserTie , faRightFromBrack
 import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Logo from '../images/logo.jpeg'
+import Cookies from 'js-cookie'
 
 function Sidebar(){
     const navigate = useNavigate()
   const [isSidebarOpen , setisSidebarOpen] = useState(false)
   const handleLogout = async()=>{
-    await localStorage.removeItem('token');
-    navigate('/')
+    Cookies.remove('token');
+    Cookies.remove('adminName');
+    Cookies.remove('adminPass');
+    Cookies.remove('adminEmail');
+
+    setTimeout(()=>{
+        navigate('/')
+    },2000)
+
   }
   return (
     <>

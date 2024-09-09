@@ -19,6 +19,7 @@ function UserTable() {
   const navigate = useNavigate()
   const {adminData , setuserData , storeToken} = useContext(LoginContext)
   let token = Cookies.get('token')
+  let admin = Cookies.get('adminName')
 
  
 
@@ -56,6 +57,7 @@ function UserTable() {
     let cookie = Cookies.get('token')
     if(cookie){
       console.log(storeToken);
+      console.log("adminName",admin);
       
       fetchUsers()
     }

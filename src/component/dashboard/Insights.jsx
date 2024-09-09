@@ -45,7 +45,7 @@ function Insights() {
         </div>
         <div className="progress">
           <svg>
-            <circle cx="38" cy="38" r="36"></circle>
+            <circle cx="40" cy="40" r="36"></circle>
           </svg>
           <div className="number">
             <p>100%</p>
@@ -62,8 +62,7 @@ function Insights() {
         </div>
         <div className="progress">
           <svg>
-            <circle cx="38" cy="38" r="36"></circle>
-          </svg>
+          <circle cx="34" cy="41" r="32"></circle>          </svg>
           <div className="number">
             <p>99%</p>
           </div>
@@ -79,7 +78,7 @@ function Insights() {
         </div>
         <div className="progress">
           <svg>
-            <circle cx="38" cy="38" r="36"></circle>
+            <circle cx="40" cy="50" r="32" stroke="blue"></circle>
           </svg>
           <div className="number">
             <p>1%</p>

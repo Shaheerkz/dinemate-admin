@@ -5,17 +5,44 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUpload , faTrash } from '@fortawesome/free-solid-svg-icons'
 import { LoginContext } from '../../context/Admin'
 import { useContext } from 'react'
+import Cookie from 'js-cookie'
+import axios from 'axios'
+
 function EditProfile() {
 
-  const {adminData} = useContext(LoginContext)
   const [file, setFile] = useState(Profile);
-  const [data, setdata] = useState([]);
+  const [Data, setData] = useState();
+
+  
+  const pass = Cookie.get('adminPass')
+  const Email = Cookie.get('adminEmail')
+
+  const fetchData = async ()=>{
+    const url = "https://backend.mydinemate.com/api/admin/login";
+    const data = {
+      email: Email,
+      password: pass,
+    };
+
+      const result = await axios.post(url, data, {
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        },
+      });
+     
+      await setData(result.data)
+      
+      
+    }
+    
+    console.log(Data);
+
+useEffect(()=>{
+  fetchData()
+},[])
 
 
-
-  useEffect( () => {
-
-  }, []);
   const handleUpload = (e)=>{
     setFile(URL.createObjectURL(e.target.files[0]));
   }
@@ -67,7 +94,7 @@ function EditProfile() {
               type="text"
               className="form-control"
               id="fullName"
-              value={adminData.lenght ? adminData.admin.name : 'dummy'  }
+              value={Data ? Data.admin.name : 'dummy'  }
             />
           </div>
         </div>
@@ -101,7 +128,7 @@ function EditProfile() {
               type="text"
               className="form-control"
               id="Job"
-              value={adminData?.admin.role ? adminData.admin.role : "Admin"}
+              value={ Data ? Data.admin.role : "Admin"}
             />
           </div>
         </div>
@@ -152,7 +179,7 @@ function EditProfile() {
               type="text"
               className="form-control"
               id="Phone"
-              value={adminData.admin.contactNumber ? adminData.admin.contactNumber  : "00112233"}
+              value={Data ? Data.admin.contactNumber  : "00112233"}
             />
           </div>
         </div>
@@ -167,82 +194,10 @@ function EditProfile() {
               type="email"
               className="form-control"
               id="Email"
-              value={adminData.admin.email ? adminData.admin.email : 'admin@test.com' }
+              value={Data ? Data.admin.email : 'admin@test.com' }
             />
           </div>
         </div>
-
-        {/* <div className="row mb-3">
-          <label
-            htmlFor="Twitter"
-            className="col-md-4 col-lg-3 col-form-label"
-          >
-            Twitter Profile
-          </label>
-          <div className="col-md-8 col-lg-9">
-            <input
-              name="twitter"
-              type="text"
-              className="form-control"
-              id="Twitter"
-              value="https://twitter.com/#"
-            />
-          </div>
-        </div>
-
-        <div className="row mb-3">
-          <label
-            htmlFor="Facebook"
-            className="col-md-4 col-lg-3 col-form-label"
-          >
-            Facebook Profile
-          </label>
-          <div className="col-md-8 col-lg-9">
-            <input
-              name="facebook"
-              type="text"
-              className="form-control"
-              id="Facebook"
-              value="https://facebook.com/#"
-            />
-          </div>
-        </div>
-
-        <div className="row mb-3">
-          <label
-            htmlFor="Instagram"
-            className="col-md-4 col-lg-3 col-form-label"
-          >
-            Instagram Profile
-          </label>
-          <div className="col-md-8 col-lg-9">
-            <input
-              name="instagram"
-              type="text"
-              className="form-control"
-              id="Instagram"
-              value="https://instagram.com/#"
-            />
-          </div>
-        </div>
-
-        <div className="row mb-3">
-          <label
-            htmlFor="Linkedin"
-            className="col-md-4 col-lg-3 col-form-label"
-          >
-            Linkedin Profile
-          </label>
-          <div className="col-md-8 col-lg-9">
-            <input
-              name="linkedin"
-              type="text"
-              className="form-control"
-              id="Linkedin"
-              value="https://linkedin.com/#"
-            />
-          </div>
-        </div> */}
 
         <div className="text-center">
           <button type="submit" className="btn btn-primary">

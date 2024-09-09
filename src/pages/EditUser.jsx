@@ -1,11 +1,16 @@
 import React, { useCallback, useEffect, useState  , useLayoutEffect} from "react";
 import profile from ".././images/user.png";
 import { Form } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useContext } from "react";
 import { LoginContext } from "../context/Admin";
+import Cookies from 'js-cookie'
 function EditUser() {
+
+
+  const navigate = useNavigate()
+  let token = Cookies.get('token')
   const {adminData } = useContext(LoginContext);
 
   const { userId } = useParams();
@@ -23,7 +28,7 @@ function EditUser() {
     const response = await axios.get('https://backend.mydinemate.com/api/admin/getUsers', {
       headers: {
         'Accept': '*/*',
-        'Authorization': `Bearer ${adminData.token}` 
+        'Authorization': `Bearer ${token}` 
       }})
 
       const data = response.data
@@ -41,7 +46,15 @@ function EditUser() {
   }
 
   useEffect(() => {
-    fetchData()
+    let cookie = Cookies.get('token')
+    if(cookie){
+      fetchData()
+    }
+    else{
+      navigate('/')
+    }
+
+
   }, []);
 
 
